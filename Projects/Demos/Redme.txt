@@ -1,2 +1,0 @@
-File can be removed after adding the actual content
-This is the limitation as we can not add the empty folder
