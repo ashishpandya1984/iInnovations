@@ -8,9 +8,9 @@ interface IPresenter {
 
     void onActivityCreate();
 
-    void onActivityResume();
+    void onActivityResume( final String cityName );
 
-    void onActivityPause();
+    void onActivityStop();
 
     void onPermissionGranted();
 }

@@ -1,17 +1,19 @@
 package com.londonappbrewery.climapm;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class WeatherController extends AppCompatActivity implements IView<WeatherDataModel> {
+public class WeatherController extends AppCompatActivity implements IView<WeatherDataModel>, View.OnClickListener {
 
     private final int REQUEST_CODE = 123;
 
@@ -35,23 +37,40 @@ public class WeatherController extends AppCompatActivity implements IView<Weathe
         m_TemperatureLabel  = (TextView) findViewById(R.id.tempTV);
 
         ImageButton changeCityButton = (ImageButton) findViewById(R.id.changeCityButton);
+        changeCityButton.setOnClickListener( this );
 
-        m_weatherPresenter = new WeatherPresenter(this);
-        m_weatherPresenter.onActivityCreate();
+        initializeWeatherPresenter();
+    }
+
+    private void initializeWeatherPresenter() {
+
+        if( m_weatherPresenter == null ) {
+            m_weatherPresenter = new WeatherPresenter(this);
+            m_weatherPresenter.onActivityCreate();
+        }
     }
 
     @Override
     protected void onPostResume()
     {
         super.onPostResume();
-        m_weatherPresenter.onActivityResume();
+        Intent intent = getIntent();
+
+        final String cityName = intent.getStringExtra("City");
+        m_weatherPresenter.onActivityResume(cityName);
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
-        m_weatherPresenter.onActivityPause();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        m_weatherPresenter.onActivityStop();
     }
 
     @Override
@@ -90,5 +109,12 @@ public class WeatherController extends AppCompatActivity implements IView<Weathe
     public AppCompatActivity getLinkedActivity()
     {
         return this;
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        Intent intent = new Intent(WeatherController.this, ChangeCityController.class);
+        startActivity(intent);
     }
 }

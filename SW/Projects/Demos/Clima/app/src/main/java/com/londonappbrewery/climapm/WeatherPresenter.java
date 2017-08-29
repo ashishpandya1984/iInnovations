@@ -26,7 +26,7 @@ class WeatherPresenter extends JsonHttpResponseHandler implements IPresenter, Lo
     private final String APP_ID = "e72ca729af228beabd5d20e3b7749713";
 
     // Time between location updates (5000 milliseconds or 5 seconds)
-    private final long MIN_TIME = 5000;
+    private final long MIN_TIME = 1000;
 
     // Distance between location updates (1000m or 1km)
     private final float MIN_DISTANCE = 1000;
@@ -49,21 +49,27 @@ class WeatherPresenter extends JsonHttpResponseHandler implements IPresenter, Lo
     }
 
     @Override
-    public void onActivityResume()
+    public void onActivityResume(final String cityName)
     {
-        requestWeatherData();
+        if( cityName != null && !cityName.isEmpty() ) {
+            requestWeatherDataForCity( cityName );
+        }
+        else {
+            requestWeatherDataForCurrentLocation();
+        }
     }
 
     @Override
-    public void onActivityPause()
+    public void onActivityStop()
     {
-        m_locationManager.removeUpdates(this);
+        if(m_locationManager != null)
+            m_locationManager.removeUpdates(this);
     }
 
     @Override
     public void onPermissionGranted()
     {
-        requestWeatherData();
+        requestWeatherDataForCurrentLocation();
     }
 
     @Override
@@ -111,7 +117,7 @@ class WeatherPresenter extends JsonHttpResponseHandler implements IPresenter, Lo
         super.onFailure(statusCode, headers, throwable, errorResponse);
     }
 
-    private void requestWeatherData() {
+    private void requestWeatherDataForCurrentLocation() {
         try
         {
             m_locationManager = (LocationManager) m_WeatherDataModelView.getLinkedActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -123,6 +129,15 @@ class WeatherPresenter extends JsonHttpResponseHandler implements IPresenter, Lo
         {
             Log.d("Clima", ex.toString());
         }
+    }
+
+    private void requestWeatherDataForCity(String cityName)
+    {
+        RequestParams request = new RequestParams();
+        request.put("q", cityName);
+        request.put("appid", APP_ID);
+
+        doHttpWork(request);
     }
 
     private void doHttpWork(final RequestParams request)
