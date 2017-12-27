@@ -84,8 +84,7 @@ class ChatListAdapter extends BaseAdapter implements ChildEventListener
         final ChatMessage message = getItem(position);
         final ViewHolder holder = (ViewHolder) convertView.getTag();
 
-        boolean isMe = message.getAuthor().equals(m_authorDisplayName);
-        setChatRowAppearance(isMe, holder);
+        setChatRowAppearance( isItMe(message), holder );
 
         String author = message.getAuthor();
         holder.authorName.setText(author);
@@ -96,20 +95,16 @@ class ChatListAdapter extends BaseAdapter implements ChildEventListener
         return convertView;
     }
 
+    private boolean isItMe(ChatMessage message)
+    {
+        return message.getAuthor().equals(m_authorDisplayName);
+    }
+
     private void setChatRowAppearance(boolean isItMe, ViewHolder holder)
     {
-        if (isItMe)
-        {
-            holder.params.gravity = Gravity.END;
-            holder.authorName.setTextColor(Color.GREEN);
-            holder.body.setBackgroundResource(R.drawable.bubble2);
-        }
-        else
-        {
-            holder.params.gravity = Gravity.START;
-            holder.authorName.setTextColor(Color.BLUE);
-            holder.body.setBackgroundResource(R.drawable.bubble1);
-        }
+        holder.params.gravity = (isItMe) ? Gravity.END : Gravity.START;
+        holder.authorName.setTextColor(isItMe ? Color.GREEN : Color.BLUE);
+        holder.body.setBackgroundResource(isItMe ? R.drawable.bubble2 : R.drawable.bubble1);
 
         holder.authorName.setLayoutParams(holder.params);
         holder.body.setLayoutParams(holder.params);
