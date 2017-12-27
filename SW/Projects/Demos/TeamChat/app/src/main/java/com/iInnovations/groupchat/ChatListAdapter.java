@@ -48,21 +48,21 @@ class ChatListAdapter extends BaseAdapter implements ChildEventListener
     }
 
     @Override
-    public int getCount() {
+    public int getCount()
+    {
         return m_messageCollection.size();
     }
 
     @Override
-    public ChatMessage getItem(int position) {
+    public ChatMessage getItem(int position)
+    {
         DataSnapshot snapshot = m_messageCollection.get(position);
-
-        ChatMessage msg = new ChatMessage(snapshot.child("author").getValue().toString(), snapshot.child("message").getValue().toString());
-        return msg;
-        //return new ChatMessage("Miklo", "Hello everyone!");
+        return snapshot.getValue(ChatMessage.class);
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(int position)
+    {
         return 0;
     }
 
@@ -96,8 +96,8 @@ class ChatListAdapter extends BaseAdapter implements ChildEventListener
         return convertView;
     }
 
-    private void setChatRowAppearance(boolean isItMe, ViewHolder holder) {
-
+    private void setChatRowAppearance(boolean isItMe, ViewHolder holder)
+    {
         if (isItMe)
         {
             holder.params.gravity = Gravity.END;
@@ -123,22 +123,26 @@ class ChatListAdapter extends BaseAdapter implements ChildEventListener
     }
 
     @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    public void onChildChanged(DataSnapshot dataSnapshot, String s)
+    {
 
     }
 
     @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
+    public void onChildRemoved(DataSnapshot dataSnapshot)
+    {
 
     }
 
     @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    public void onChildMoved(DataSnapshot dataSnapshot, String s)
+    {
 
     }
 
     @Override
-    public void onCancelled(DatabaseError databaseError) {
+    public void onCancelled(DatabaseError databaseError)
+    {
 
     }
 }

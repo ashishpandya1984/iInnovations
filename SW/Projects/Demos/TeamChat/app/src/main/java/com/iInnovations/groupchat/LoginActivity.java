@@ -17,27 +17,30 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 
-public class LoginActivity extends AppCompatActivity implements OnCompleteListener {
-
+public class LoginActivity extends AppCompatActivity implements OnCompleteListener
+{
     // TODO: Add member variables here:
-    // UI references.
     private AutoCompleteTextView mEmailView;
+
     private EditText mPasswordView;
 
     // Cloud authentication object to perform the login
-    FirebaseAuth m_auth;
+    FirebaseAuth m_auth = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.login_email);
         mPasswordView = (EditText) findViewById(R.id.login_password);
 
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent)
+            {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
@@ -51,13 +54,15 @@ public class LoginActivity extends AppCompatActivity implements OnCompleteListen
     }
 
     // Executed when Sign in button pressed
-    public void signInExistingUser(View v)   {
+    public void signInExistingUser(View v)
+    {
         // TODO: Call attemptLogin() here
         attemptLogin();
     }
 
     // Executed when Register button pressed
-    public void registerNewUser(View v) {
+    public void registerNewUser(View v)
+    {
         Intent intent = new Intent(this, com.iInnovations.groupchat.RegisterActivity.class);
         finish();
         startActivity(intent);

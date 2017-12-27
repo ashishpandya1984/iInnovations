@@ -6,24 +6,25 @@ package com.iInnovations.groupchat;
 
 class ChatMessage {
 
-    private String m_author;
+    protected String author = null;
 
-    private String m_message;
-
-    public ChatMessage(String m_author, String m_message) {
-        this.m_author = m_author;
-        this.m_message = m_message;
-    }
+    protected String message = null;
 
     public ChatMessage()
     {
     }
 
+    public ChatMessage(String m_author, String m_message)
+    {
+        this.author = m_author;
+        this.message = m_message;
+    }
+
     public String getAuthor() {
-        return m_author;
+        return author;
     }
 
     public String getMessage() {
-        return m_message;
+        return message;
     }
 }

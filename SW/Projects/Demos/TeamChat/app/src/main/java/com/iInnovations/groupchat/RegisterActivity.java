@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -25,13 +23,17 @@ public class RegisterActivity extends AppCompatActivity implements OnCompleteLis
 
     // Constants
     public static final String CHAT_PREFS = "ChatPrefs";
+
     public static final String DISPLAY_NAME_KEY = "username";
 
     // TODO: Add member variables here:
     // UI references.
     private AutoCompleteTextView mEmailView;
+
     private AutoCompleteTextView mUsernameView;
+
     private EditText mPasswordView;
+
     private EditText mConfirmPasswordView;
 
     // Firebase instance variables
@@ -78,63 +80,48 @@ public class RegisterActivity extends AppCompatActivity implements OnCompleteLis
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
+        if ( isValidUserCredentials( ) )
+        {
+            // TODO: Call create FirebaseUser() here
+            m_authentication.createUserWithEmailAndPassword( mEmailView.getText().toString(), mPasswordView.getText().toString() ).addOnCompleteListener(this);
+        }
+    }
+
+    private boolean isValidUserCredentials()
+    {
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
+        final String confirmPassword = mConfirmPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
+        StringBuilder errorMsg = new StringBuilder();
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password))
+        if (!PasswordValidator.isValidPassword(password, confirmPassword, errorMsg))
         {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+            mPasswordView.setError(errorMsg.toString());
             focusView = mPasswordView;
             cancel = true;
         }
 
+        errorMsg = new StringBuilder();
+
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email))
+        if ( !UserNameValidator.isValidUserName(email, errorMsg) )
         {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        }
-        else if (!isEmailValid(email))
-        {
-            mEmailView.setError(getString(R.string.error_invalid_email));
+            mEmailView.setError(errorMsg.toString());
             focusView = mEmailView;
             cancel = true;
         }
 
-        if (cancel)
-        {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
+        // There was an error; don't attempt login and focus the first
+        // form field with an error.
+        if( cancel )
             focusView.requestFocus();
-        }
-        else
-        {
-            // TODO: Call create FirebaseUser() here
-            createFirebaseUser(email, password);
-        }
-    }
 
-    private boolean isEmailValid(String email) {
-        // You can add more checking logic here.
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Add own logic to check for a valid password
-        String confirmPassword = mConfirmPasswordView.getText().toString();
-        return confirmPassword.equals( password ) && password.length() > 4;
-    }
-
-    // TODO: Create a Firebase user
-    void createFirebaseUser(final String email, final String password)
-    {
-        m_authentication.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this);
+        return !cancel;
     }
 
     // TODO: Save the display name to Shared Preferences
@@ -171,5 +158,4 @@ public class RegisterActivity extends AppCompatActivity implements OnCompleteLis
             showAlertToUser("User registration failed!");
         }
     }
-
 }
